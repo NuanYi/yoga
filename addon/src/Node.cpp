@@ -31,4 +31,18 @@ namespace yoga {
             info.GetReturnValue().Set(Nan::NewInstance(cons).ToLocalChecked());
         }
     }
+
+    NAN_METHOD(Node::Create) {
+
+        auto cons = Nan::New(constructor());
+        info.GetReturnValue().Set(Nan::NewInstance(cons).ToLocalChecked());
+    }
+
+    NAN_METHOD(Node::setHeight) {
+        if (info.Length() >= 1) {
+            
+        }
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+        
+    }
 }
