@@ -6,7 +6,7 @@
 
 namespace yoga {
     
-    class Node: Nan::ObjectWrap {
+    class Node: public Nan::ObjectWrap {
     public:
         static NAN_MODULE_INIT(Init);
         

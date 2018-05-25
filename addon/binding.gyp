@@ -6,6 +6,8 @@
             "src/Binding.cc",
             "src/Node.cpp",
             "src/Node.h",
+            "src/NanChecker.h",
+            "src/NanChecker.cpp",
             "../yoga/Utils.cpp",
             "../yoga/YGConfig.cpp",
             "../yoga/YGEnums.cpp",
@@ -20,5 +22,6 @@
             './../yoga',
             './../nan'
         ],
+        'cflags_cc!': [ '-fno-exceptions' ],
     }]
 }

@@ -39,9 +39,7 @@ namespace yoga {
     }
 
     NAN_METHOD(Node::setHeight) {
-        if (info.Length() >= 1) {
-            
-        }
+        
         Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
         
     }
