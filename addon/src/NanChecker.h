@@ -9,27 +9,16 @@
 namespace yoga {
     
     typedef std::function<bool(Nan::NAN_METHOD_ARGS_TYPE)> InitFunction;
+    typedef std::function<void(const std::string& msg)> ErrorCallback;
     
     
     // util function
     bool ToMaybeNative(v8::Local<v8::Value> value, bool& outVal);
     bool ToMaybeNative(v8::Local<v8::Value> value, int& outVal);
     bool ToMaybeNative(v8::Local<v8::Value> value, float& outVal);
+    bool ToMaybeNative(v8::Local<v8::Value> value, double& outVal);
     bool ToMaybeNative(v8::Local<v8::Value> value, std::string& outValue);
     
-    
-    class ArgumentMismatchException {
-    public:
-        ArgumentMismatchException(const std::string& msg);
-        explicit ArgumentMismatchException(int actual, int expected);
-        ArgumentMismatchException(int arctual, const std::initializer_list<int>& expected);
-        virtual ~ArgumentMismatchException() {}
-        
-        virtual const char* what() const;
-        
-    protected:
-        std::string mMessage;
-    };
     
     class NanMethodArgBinding;
     class NanCheckArguments;
@@ -42,6 +31,7 @@ namespace yoga {
     class NanCheckArguments {
     public:
         NanCheckArguments(Nan::NAN_METHOD_ARGS_TYPE args);
+        NanCheckArguments(Nan::NAN_METHOD_ARGS_TYPE args, ErrorCallback onError);
         
         NanCheckArguments& argumentsCount(int count);
         NanCheckArguments& argumentsCount(int argsCount1, int argsCount2);
@@ -49,12 +39,16 @@ namespace yoga {
         NanMethodArgBinding argument(int index);
      
         operator bool() const;
+        
+        bool check();
+        
         NanCheckArguments& addAndClause(InitFunction rightCondition);
         NanCheckArguments& error(std::string* error);
         
     protected:
         Nan::NAN_METHOD_ARGS_TYPE mArgs;
         InitFunction mInit;
+        ErrorCallback mErrorCallback;
         std::string* mError;
     };
     
@@ -95,6 +89,8 @@ namespace yoga {
         NanMethodArgBinding& NotNull();
         NanMethodArgBinding& isArray();
         
+        NanMethodArgBinding& customCheck(std::function<bool(const v8::Local<v8::Value>&, std::string& msg)> callback);
+        
         template <typename T>
         NanArgStringEnum<T> stringEnum(std::initializer_list<std::pair<const char*, T>> possibleValues) {
             return std::move(NanArgStringEnum<T>(possibleValues, isString(), mArgIndex));
@@ -117,10 +113,23 @@ namespace yoga {
             });
         }
         
+        
         template <typename T1, typename T2>
         NanCheckArguments& bind(T1& value1, T2& value2) {
             return mParent.addAndClause([this, &value1, &value2](Nan::NAN_METHOD_ARGS_TYPE args) -> bool{
                 return ToMaybeNative(args[mArgIndex], value1) || ToMaybeNative(args[mArgIndex], value2);
+            });
+        }
+        
+        template <typename T>
+        NanCheckArguments& bind(std::function<void(T value)> callback) {
+            return mParent.addAndClause([this, callback](Nan::NAN_METHOD_ARGS_TYPE args) -> bool{
+                T temp;
+                bool ret = ToMaybeNative(args[mArgIndex], temp);
+                if (ret) {
+                    callback(temp);
+                }
+                return ret;
             });
         }
         

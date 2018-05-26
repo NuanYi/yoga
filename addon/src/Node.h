@@ -14,8 +14,13 @@ namespace yoga {
         static NAN_METHOD(Create);
         static NAN_METHOD(setWidth);
         static NAN_METHOD(setHeight);
+        static NAN_METHOD(getWidth);
         
         static NAN_METHOD(setJustifyContent);
+        
+        inline YGNodeRef node() {
+            return mNode;
+        }
         
     private:
         YGNodeRef mNode;
