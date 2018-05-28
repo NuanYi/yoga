@@ -8,8 +8,8 @@ console.log('Node = ', Node);
 let root = new Node();
 console.log('root = ', root);
 
-root.setWidth('123');
+root.setWidth(200);
 
 console.log('width = ', root.getWidth());
 
-root.setJustifyContent(2);
+root.setJustifyContent('space-between');

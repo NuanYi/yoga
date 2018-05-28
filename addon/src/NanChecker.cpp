@@ -1,6 +1,5 @@
 #include "NanChecker.h"
-#include <sstream>
-#include <iostream>
+
 
 namespace yoga {
     

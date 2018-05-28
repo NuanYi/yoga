@@ -5,6 +5,8 @@
 #include <string>
 #include <functional>
 #include <map>
+#include <vector>
+#include <sstream>
 
 namespace yoga {
     
@@ -65,6 +67,9 @@ namespace yoga {
         }
         
         NanCheckArguments& bind(EnumType& value);
+        
+        NanCheckArguments& bind(std::function<void(EnumType value)> callback);
+        
     protected:
         
         bool TryMatchStringEnum(const std::string& key, EnumType& outValue) const;
@@ -75,11 +80,34 @@ namespace yoga {
         int mArgIndex;
     };
     
+    template <typename EnumType>
+    class NanArgNumberEnum {
+    public:
+        explicit NanArgNumberEnum(std::initializer_list<EnumType> possibleValues, NanMethodArgBinding& owner, int argindex)
+        : mPossibleValues(possibleValues.begin(), possibleValues.end())
+        , mOwner(owner)
+        , mArgIndex(argindex)
+        {
+            
+        }
+        NanCheckArguments& bind(EnumType& value);
+        
+    protected:
+        bool TryMatchNumberEnum(const EnumType& value, EnumType& outValue) const;
+        
+    protected:
+        std::vector<EnumType> mPossibleValues;
+        NanMethodArgBinding& mOwner;
+        int mArgIndex;
+    };
+    
     
     class NanMethodArgBinding {
     public:
         template<typename EnumType>
         friend class NanArgStringEnum;
+        template<typename T>
+        friend class NanArgNumberEnum;
         
         NanMethodArgBinding(int index, NanCheckArguments& parent);
         
@@ -95,6 +123,7 @@ namespace yoga {
         NanArgStringEnum<T> stringEnum(std::initializer_list<std::pair<const char*, T>> possibleValues) {
             return std::move(NanArgStringEnum<T>(possibleValues, isString(), mArgIndex));
         }
+        
         
         template <typename T>
         NanCheckArguments& bind(v8::Local<T>& value) {
@@ -155,14 +184,55 @@ namespace yoga {
     }
     
     template <typename T>
+    NanCheckArguments& NanArgStringEnum<T>::bind(std::function<void(T value)> callback){
+        return mOwner.mParent.addAndClause([this, callback](Nan::NAN_METHOD_ARGS_TYPE args) -> bool{
+            std::string key;
+            bool ret = ToMaybeNative(args[mArgIndex], key);
+            if (ret) {
+                T temp;
+                ret = this->TryMatchStringEnum(key, temp);
+                if (ret)
+                    callback(temp);
+            }
+            return ret;
+        });
+    }
+    
+    template <typename T>
     bool NanArgStringEnum<T>::TryMatchStringEnum(const std::string &key, T &outValue) const {
         
         auto it = mPossibleValues.find(key.c_str());
         if (it != mPossibleValues.end()) {
-            outValue = static_cast<const char*>(it->second);
+            outValue = static_cast<T>(it->second);
             return true;
         }
         
+        std::ostringstream stringStream;
+        stringStream<<"param at "<<mArgIndex<<"shoud be a string enum which is a flex justfy content value";
+        std::string msg = stringStream.str();
+        Nan::ThrowError(msg.c_str());
+        
+        return false;
+    }
+    
+    
+    template <typename T>
+    NanCheckArguments& NanArgNumberEnum<T>::bind(T &value) {
+        
+        return mOwner.mParent.addAndClause([this, &value](Nan::NAN_METHOD_ARGS_TYPE args) -> bool {
+            
+            return ToMaybeNative(args[mArgIndex], value);
+        });
+    }
+    
+    template <typename T>
+    bool NanArgNumberEnum<T>::TryMatchNumberEnum(const T &value, T &outValue) const {
+        for(T it : mPossibleValues) {
+            if (it == value) {
+                outValue = it;
+                return true;
+            }
+        }
         return false;
     }
 }

@@ -91,21 +91,14 @@ namespace yoga {
         Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
         
         NanCheckArguments(info).argumentsCount(1)
-        .argument(0).customCheck([](const v8::Local<v8::Value>& value, std::string& msg) -> bool{
-            int temp;
-            bool castRet = ToMaybeNative(value, temp);
-            if (castRet) {
-                if (temp >= YGJustifyFlexStart && temp <= YGJustifySpaceEvenly) {
-                    return true;
-                } else {
-                    msg = "argument at 1 should be One of Node.Justfy value";
-                    return false;
-                }
-            } else {
-                msg = "argument at 1 should be One of Node.Justfy value";
-                return false;
-            }
-        }).bind<int>([node](int value) -> void{
+        .argument(0).stringEnum<int>({
+            { "center", YGJustifyCenter },
+            { "flex-start", YGJustifyFlexStart },
+            { "flex-end", YGJustifyFlexEnd },
+            { "space-between", YGJustifySpaceBetween },
+            { "space-around", YGJustifySpaceAround }
+        })
+        .bind([node](int value) -> void{
             YGNodeStyleSetJustifyContent(node->node(), static_cast<YGJustify>(value));
         })
         .check();
