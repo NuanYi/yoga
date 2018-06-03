@@ -45,13 +45,11 @@ namespace yoga {
         bool check();
         
         NanCheckArguments& addAndClause(InitFunction rightCondition);
-        NanCheckArguments& error(std::string* error);
         
     protected:
         Nan::NAN_METHOD_ARGS_TYPE mArgs;
         InitFunction mInit;
         ErrorCallback mErrorCallback;
-        std::string* mError;
     };
     
     

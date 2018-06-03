@@ -8,7 +8,7 @@ console.log('Node = ', Node);
 let root = new Node();
 console.log('root = ', root);
 
-root.setWidth(200);
+root.setWidth('1');
 
 console.log('width = ', root.getWidth());
 

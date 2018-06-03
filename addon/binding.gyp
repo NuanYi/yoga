@@ -22,6 +22,6 @@
             './../yoga',
             './../nan'
         ],
-        'cflags_cc!': [ '-fno-exceptions' ],
+        'cflags_cc!': [ '-fno-exceptions', '-w' ],
     }]
 }

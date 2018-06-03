@@ -7,6 +7,7 @@ namespace yoga {
     
     Node::Node(): mNode(nullptr) {
         mNode = YGNodeNew();
+        YGNodeSetContext(mNode, reinterpret_cast<void*>(this));
     }
     
     Node::~Node() {
@@ -45,6 +46,96 @@ namespace yoga {
 
         auto cons = Nan::New(constructor());
         info.GetReturnValue().Set(Nan::NewInstance(cons).ToLocalChecked());
+    }
+
+    NAN_METHOD(Node::setPositionType) {
+        Nan::HandleScope();
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+
+        NanCheckArguments(info).argumentsCount(1)
+        .argument(0).stringEnum<int>({
+            {"abslout", YGPositionTypeAbsolute},
+            {"relative", YGPositionTypeRelative}
+        }).bind([node](int value) -> void {
+            YGNodeStyleSetPositionType(node->node(), static_cast<YGPositionType>(value));
+        })
+        .check();
+    }
+
+    NAN_METHOD(Node::setPosition) {
+        Nan::HandleScope();
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+
+        int edge;
+        double position;
+        NanCheckArguments(info).argumentsCount(2)
+        .argument(0)
+        .stringEnum<int>({
+            {"left", YGEdgeLeft},
+            {"right", YGEdgeRight},
+            {"top", YGEdgeTop},
+            {"bottom", YGEdgeBottom},
+            {"start", YGEdgeStart},
+            {"end", YGEdgeEnd},
+            {"horizontal", YGEdgeHorizontal},
+            {"vertical", YGEdgeVertical},
+            {"all", YGEdgeAll}
+        })
+        .bind(edge)
+        .argument(1)
+        .bind(position)
+        .check();
+
+        YGNodeStyleSetPosition(node->node(), static_cast<YGEdge>(edge), position);
+    }
+
+    NAN_METHOD(Node::setPositionPercent) {
+        Nan::HandleScope();
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+
+        int edge;
+        double position;
+        NanCheckArguments(info).argumentsCount(2)
+        .argument(0)
+        .stringEnum<int>({
+            {"left", YGEdgeLeft},
+            {"right", YGEdgeRight},
+            {"top", YGEdgeTop},
+            {"bottom", YGEdgeBottom},
+            {"start", YGEdgeStart},
+            {"end", YGEdgeEnd},
+            {"horizontal", YGEdgeHorizontal},
+            {"vertical", YGEdgeVertical},
+            {"all", YGEdgeAll}
+        })
+        .bind(edge)
+        .argument(1)
+        .bind(position)
+        .check();
+
+        YGNodeStyleSetPositionPercent(node->node(), static_cast<YGEdge>(edge), position);
+    }
+
+    NAN_METHOD(Node::setAlignContent) {
+        Nan::HandleScope();
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+
+        int alignContent;
+        NanCheckArguments(info).argumentsCount(1)
+        .argument(0).stringEnum<int>({
+            {"auto", YGAlignAuto},
+            {"flex-start", YGAlignFlexStart},
+            {"center", YGAlignCenter},
+            {"flex-end", YGAlignFlexEnd},
+            {"stretch", YGAlignStretch},
+            {"baseline", YGAlignBaseline},
+            {"space-between", YGAlignSpaceBetween},
+            {"space-around", YGAlignSpaceAround}
+        })
+        .bind(alignContent)
+        .check();
+
+        YGNodeStyleSetAlignContent(node->node(), static_cast<YGAlign>(alignContent));
     }
 
     NAN_METHOD(Node::setHeight) {

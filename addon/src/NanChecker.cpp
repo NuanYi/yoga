@@ -176,7 +176,6 @@ namespace yoga {
     : mArgs(args)
     , mInit([](Nan::NAN_METHOD_ARGS_TYPE) -> bool{ return true;})
     , mErrorCallback([](const std::string& msg) {})
-    , mError()
     {
         
     }
@@ -185,7 +184,6 @@ namespace yoga {
     : mArgs(args)
     , mInit([](Nan::NAN_METHOD_ARGS_TYPE) -> bool{ return true;})
     , mErrorCallback(onError)
-    , mError()
     {
     }
     
@@ -205,11 +203,6 @@ namespace yoga {
     
     NanMethodArgBinding NanCheckArguments::argument(int index) {
         return NanMethodArgBinding(index, *this);
-    }
-    
-    NanCheckArguments& NanCheckArguments::error(std::string *error) {
-        mError = error;
-        return *this;
     }
     
     NanCheckArguments::operator bool() const {
