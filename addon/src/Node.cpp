@@ -295,6 +295,110 @@ namespace yoga {
         YGNodeStyleSetMarginPercent(node->node(), static_cast<YGEdge>(edge), static_cast<float>(margin));
     }
     
+    NAN_METHOD(Node::setMarginAuto) {
+        Nan::HandleScope();
+        
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+        
+        int edge = 0;
+        
+        // Todo: To add setMarginAuto, cannot find it currently.
+        
+        YGNodeStyleSetMarginAuto(node->node(), static_cast<YGEdge>(edge));
+    }
+
+    NAN_METHOD(Node::setOverflow) {
+        Nan::HandleScope();
+        
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+        
+        int overflow;
+        NanCheckArguments(info).argumentsCount(1)
+        .argument(0)
+        .stringEnum<int>({
+            {"visible", YGOverflowVisible},
+            {"hidden", YGOverflowHidden},
+            {"scroll", YGOverflowScroll}
+        }).bind(overflow)
+        .check();
+        
+        YGNodeStyleSetOverflow(node->node(),  static_cast<YGOverflow>(overflow));
+    }
+    
+    NAN_METHOD(Node::setDisplay) {
+        Nan::HandleScope();
+        
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+        
+        int display;
+        NanCheckArguments(info).argumentsCount(1)
+        .argument(0)
+        .stringEnum<int>({
+            {"flex", YGDisplayFlex},
+            {"none", YGDisplayNone}
+        }).bind(display)
+        .check();
+        
+        YGNodeStyleSetDisplay(node->node(), static_cast<YGDisplay>(display));
+    }
+    
+    NAN_METHOD(Node::setFlex) {
+        Nan::HandleScope();
+        
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+        
+        // Todo: To add flex arguments
+        float flex;
+        NanCheckArguments(info).argumentsCount(1)
+        .argument(0)
+        .stringEnum<float>({
+            {"flex", YGDisplayFlex},
+            {"none", YGDisplayNone}
+        }).bind(flex)
+        .check();
+        
+        YGNodeStyleSetFlex(node->node(), static_cast<float>(flex));
+    }
+    
+    NAN_METHOD(Node::setFlexBasis) {
+        Nan::HandleScope();
+        
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+        
+        // Todo:
+    }
+
+    NAN_METHOD(Node::setFlexBasisPercent) {
+        Nan::HandleScope();
+        
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+        
+        // Todo:
+    }
+
+    NAN_METHOD(Node::setFlexBasisAuto) {
+        Nan::HandleScope();
+        
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+        
+        // Todo:
+    }
+    
+    NAN_METHOD(Node::setFlexGrow) {
+        Nan::HandleScope();
+        
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+        
+        // Todo:
+    }
+
+    NAN_METHOD(Node::setFlexShrink) {
+        Nan::HandleScope();
+        
+        Node* node = Nan::ObjectWrap::Unwrap<Node>(info.Holder());
+        
+        // Todo:
+    }
 
     NAN_METHOD(Node::setHeight) {
         Nan::HandleScope();
