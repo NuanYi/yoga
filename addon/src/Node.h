@@ -120,7 +120,7 @@ namespace yoga {
         static NAN_METHOD(getComputedTop);
         static NAN_METHOD(getComputedBottom);
 
-        static NAN_METHOD(getComputedwidth);
+        static NAN_METHOD(getComputedWidth);
         static NAN_METHOD(getComputedHeight);
 
         static NAN_METHOD(getComputedLayout);

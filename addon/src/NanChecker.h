@@ -177,7 +177,7 @@ namespace yoga {
         
         return mOwner.mParent.addAndClause([this, &value](Nan::NAN_METHOD_ARGS_TYPE args) -> bool {
             std::string key;
-            return ToMaybeNative(args[mArgIndex], key) || TryMatchStringEnum(key, value);
+            return ToMaybeNative(args[mArgIndex], key) && TryMatchStringEnum(key, value);
         });
     }
     

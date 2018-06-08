@@ -5,11 +5,25 @@ const { Node } = yoga;
 console.log('yoga = ', yoga);
 console.log('Node = ', Node);
 
-let root = new Node();
+let root = Node.Create();
 console.log('root = ', root);
+let child = Node.Create();
+child.setWidth(100);
+child.setHeight(200);
+child.setMargin('bottom',10);
+let child2 = Node.Create();
+// child2.setWidth(100);
+// child2.setHeight(200);
 
-root.setWidth('1');
+root.insertChild(child, 0);
+root.insertChild(child2,1);
 
-console.log('width = ', root.getWidth());
+root.setWidth(400);
+root.setHeight(500);
 
-root.setJustifyContent('space-between');
+root.setFlexDirection('row');
+root.setJustifyContent('flex-start');
+
+root.calculateLayout(400, 500, 'rtl');
+
+console.log('child.computedLayout = ', child2.getComputedLayout());
